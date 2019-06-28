@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterapi-controllers
+  namespace: proxmox-provider-system
+  labels:
+    control-plane: controller-manager
+    controller-tools.k8s.io: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+      controller-tools.k8s.io: "1.0"
+  template:
+    metadata:
+      labels:
+        control-plane: controller-manager
+        controller-tools.k8s.io: "1.0"
+    spec:
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+      - effect: NoExecute
+        key: node.kubernetes.io/unreachable
+        operator: Exists
+      containers:
+      - name: proxmox-machine-controller
+        image: k8scloudprovider/proxmox-cluster-api-controller:latest
+        volumeMounts:
+        - name: config
+          mountPath: /etc/kubernetes
+        - name: kubeadm
+          mountPath: /usr/bin/kubeadm
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 100m
+            memory: 30Mi
+      volumes:
+      - name: config
+        hostPath:
+          path: /etc/kubernetes
+      - name: kubeadm
+        hostPath:
+          path: /usr/bin/kubeadm

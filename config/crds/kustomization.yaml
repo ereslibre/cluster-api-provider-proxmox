@@ -1,0 +1,4 @@
+resources:
+- proxmoxproviderconfig_v1alpha1_proxmoxclusterproviderspec.yaml
+- proxmoxproviderconfig_v1alpha1_proxmoxclusterproviderstatus.yaml
+- proxmoxproviderconfig_v1alpha1_proxmoxmachineproviderspec.yaml
